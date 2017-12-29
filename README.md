@@ -8,6 +8,12 @@ shows a user's purchase history on their account. As with the community store, a
 ## Installation
 You must install the community store before installing this addon.
 
+Navigate to your packages folder, and then clone the repository
+
+```git clone https://github.com/JeRoNZ/community_store_order_history.git```
+
+Then go to the dashboard and run the install.
+
 ## Theming
 If you wish to theme the account/orders page, you will need to modify your application/config/app.php file like this:
 
