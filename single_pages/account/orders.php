@@ -344,7 +344,7 @@ $th = Core::make('helper/text');
 					<th><a href="<?= $orderListObject->getSortURL('oTotal')?>"><?= t("Total")?></a></th>
 					<th><a href="<?= $orderListObject->getSortURL('payment')?>"><?= t("Payment")?></a></th>
 					<th><?= t("Fulfilment")?></th>
-					<th><?= t("View")?></th>
+					<th><?= t("Print")?></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -360,7 +360,7 @@ $th = Core::make('helper/text');
 					?>
 					<tr>
 						<td><?= $canstart; ?>
-							<a href="<?=URL::to('/account/orders/order/',$order->getOrderID())?>"><?= $order->getOrderID()?></a><?= $canend; ?>
+							<a target="_blank" href="<?=URL::to('/account/orders/order/',$order->getOrderID())?>"><?= $order->getOrderID()?></a><?= $canend; ?>
 						</td>
 						<td>
 							<?= $canstart; ?>
@@ -424,7 +424,12 @@ $th = Core::make('helper/text');
 							?>
 						</td>
 						<td><?= $canstart; ?><?=t(ucwords($order->getStatus()))?><?= $canend; ?></td>
-						<td><a class="btn btn-primary" href="<?=URL::to('/account/orders/order/',$order->getOrderID())?>"><?= t("View")?></a></td>
+						<td>
+							<form action="<?=URL::to('/account/orders/slip')?>" method="post" target="_blank">
+								<input type="hidden" name="oID" value="<?= $order->getOrderID()?>">
+								<button class="btn btn-primary"><?= t("Print")?></button>
+							</form>
+						</td>
 					</tr>
 				<?php } ?>
 				</tbody>
