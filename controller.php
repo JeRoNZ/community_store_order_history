@@ -5,6 +5,7 @@ use Package;
 use Core;
 use Concrete\Core\Page\Page;
 use \Concrete\Core\Page\Single as SinglePage;
+use Whoops\Exception\ErrorException;
 
 class Controller extends Package {
 	protected $pkgHandle = 'community_store_order_history';
