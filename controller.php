@@ -10,7 +10,7 @@ use Whoops\Exception\ErrorException;
 class Controller extends Package {
 	protected $pkgHandle = 'community_store_order_history';
 	protected $appVersionRequired = '5.7.5';
-	protected $pkgVersion = '0.1';
+	protected $pkgVersion = '0.2';
 
 	protected $singlePages = array(
 		'/account/orders',

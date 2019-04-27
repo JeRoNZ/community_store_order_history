@@ -87,7 +87,13 @@ $dh = Core::make('helper/date');
                     <p>
                         <?= $order->getAttribute("billing_first_name") . " " . $order->getAttribute("billing_last_name") ?>
                         <br>
-                        <?php $billingaddress = $order->getAttributeValueObject(StoreOrderKey::getByHandle('billing_address'));
+                        <?php
+						if ($csVersion < 2) {
+							$handle = StoreOrderKey::getByHandle('billing_address');
+						} else {
+							$handle = 'billing_address';
+						}
+						$billingaddress = $order->getAttributeValueObject($handle);
                         if ($billingaddress) {
                             echo $billingaddress->getValue('displaySanitized', 'display');
                         }?>
@@ -95,7 +101,12 @@ $dh = Core::make('helper/date');
                 </div>
                 <div class="col-xs-4">
                     <?php
-                    $billingaddress = $order->getAttributeValueObject(StoreOrderKey::getByHandle('shipping_address'));
+					if ($csVersion < 2) {
+						$handle = StoreOrderKey::getByHandle('shipping_address');
+					} else {
+						$handle = 'shipping_address';
+					}
+                    $billingaddress = $order->getAttributeValueObject($handle);
                     if ($billingaddress) { ?>
                         <h4><?= t("Shipping Address") ?></h4>
                         <p>
@@ -109,9 +120,15 @@ $dh = Core::make('helper/date');
                 <?php if ($orderChoicesEnabled) { ?>
                     <div class="col-xs-12">
                         <h4><?= t("Other Choices") ?></h4>
-                        <?php foreach ($orderChoicesAttList as $ak) { ?>
+                        <?php foreach ($orderChoicesAttList as $ak) {
+							if ($csVersion < 2){
+								$handle = StoreOrderKey::getByHandle($ak->getAttributeKeyHandle());
+							} else {
+								$handle = $ak->getAttributeKeyHandle();
+							}
+							?>
                             <label><?= $ak->getAttributeKeyDisplayName() ?></label>
-                            <p><?= str_replace("\r\n", "<br>", $order->getAttributeValueObject(StoreOrderKey::getByHandle($ak->getAttributeKeyHandle()))->getValue('displaySanitized', 'display')); ?></p>
+                            <p><?= str_replace("\r\n", "<br>", $order->getAttributeValueObject($handle)->getValue('displaySanitized', 'display')); ?></p>
                         <?php } ?>
                     </div>
                 <?php } ?>
@@ -202,6 +219,7 @@ $dh = Core::make('helper/date');
             $shippingInstructions = $order->getShippingInstructions();
             if ($shippingInstructions) { ?>
 
+        </p>
         <p>
             <strong><?= t("Delivery Instructions") ?>: </strong><?= $shippingInstructions ?>
         </p>
@@ -209,8 +227,6 @@ $dh = Core::make('helper/date');
 
 
         <?php } ?>
-        </p>
-
     </div>
 </div>
 </body>

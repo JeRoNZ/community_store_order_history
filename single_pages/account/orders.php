@@ -2,7 +2,6 @@
 defined('C5_EXECUTE') or die("Access Denied.");
 $dh = Core::make('helper/date');
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Price as Price;
-use \Concrete\Package\CommunityStore\Src\Attribute\Key\StoreOrderKey as StoreOrderKey;
 use Concrete\Core\Page\Page;
 
 $th = Core::make('helper/text');
@@ -83,7 +82,13 @@ $th = Core::make('helper/text');
 				<h4><?= t("Billing Address")?></h4>
 				<p>
 					<?= $order->getAttribute("billing_first_name"). " " . $order->getAttribute("billing_last_name")?><br>
-					<?php $billingaddress = $order->getAttributeValueObject(StoreOrderKey::getByHandle('billing_address'));
+					<?php
+					if ($csVersion < 2){
+						$class = $controller->GetStoreOrderKeyClass();
+						$billingaddress = $order->getAttributeValueObject($class::getByHandle('billing_address'));
+					} else
+						$billingaddress = $order->getAttributeValueObject('billing_address');
+
 					if ($billingaddress) {
 						echo $billingaddress->getValue('displaySanitized', 'display');
 					}
@@ -96,7 +101,14 @@ $th = Core::make('helper/text');
 						<h4><?= t("Shipping Address")?></h4>
 						<p>
 							<?= $order->getAttribute("shipping_first_name"). " " . $order->getAttribute("shipping_last_name")?><br>
-							<?php $shippingaddress = $order->getAttributeValueObject(StoreOrderKey::getByHandle('shipping_address'));
+							<?php
+							if ($csVersion < 2 ) {
+								$class = $controller->GetStoreOrderKeyClass();
+								$shippingaddress = $order->getAttributeValueObject($class::getByHandle('shipping_address'));
+							} else {
+								$shippingaddress = $order->getAttributeValueObject('shipping_address');
+							}
+
 							if ($shippingaddress) {
 								echo $shippingaddress->getValue('displaySanitized', 'display');
 							}
