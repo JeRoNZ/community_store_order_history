@@ -349,7 +349,7 @@ $th = Core::make('helper/text');
 					<th><?= t('Products')?></th>
 					<th><a href="<?= $orderListObject->getSortURL('oDate')?>"><?= t('Order Date')?></a></th>
 					<th><a href="<?= $orderListObject->getSortURL('oTotal')?>"><?= t('Total')?></a></th>
-					<th><a href="<?= $orderListObject->getSortURL('payment')?>"><?= t('Payment')?></a></th>
+					<th><?= t('Payment')?></th>
 					<th><?= t('Fulfilment')?></th>
 					<th><?= t('Print')?></th>
 				</tr>

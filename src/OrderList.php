@@ -3,14 +3,15 @@ namespace  Concrete\Package\CommunityStoreOrderHistory\Src;
 defined('C5_EXECUTE') or die('Access Denied.');
 use Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderList as OL;
 use Concrete\Core\Support\Facade\Application;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 class OrderList extends OL
 {
-	protected $autoSortColumns = array('oID','cID','oDate','oTotal','payment');
+	protected $autoSortColumns = array('oID','cID','oDate','oTotal');
 
 	// Copy of community store Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderList,
 	// but without the fixed sort by
-	public function finalizeQuery(\Doctrine\DBAL\Query\QueryBuilder $query)
+	public function finalizeQuery(QueryBuilder $query)
 	{
 		$paramcount = 0;
 
@@ -34,11 +35,11 @@ class OrderList extends OL
 		if (isset($this->status)) {
 			$app = Application::getFacadeApplication();
 			$db = $app->make('database')->connection();
-			$matchingOrders = $db->query("SELECT oID FROM CommunityStoreOrderStatusHistories t1
+			$matchingOrders = $db->query('SELECT oID FROM CommunityStoreOrderStatusHistories t1
                                             WHERE oshStatus = ? and
                                                 t1.oshDate = (SELECT MAX(t2.oshDate)
                                                              FROM CommunityStoreOrderStatusHistories t2
-                                                             WHERE t2.oID = t1.oID)", array($this->status));
+                                                             WHERE t2.oID = t1.oID)', array($this->status));
 			$orderIDs = array();
 
 			while ($value = $matchingOrders->fetchRow()) {
@@ -118,7 +119,7 @@ class OrderList extends OL
 		}
 
 		//$query = $this->query;
-		/* @var $query \Doctrine\DBAL\Query\QueryBuilder */
+		/* @var $query QueryBuilder */
 		//echo $query->getSQL(); die();
 
 		return $this->query;
