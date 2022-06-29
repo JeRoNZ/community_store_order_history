@@ -1,22 +1,26 @@
 <?php
 defined('C5_EXECUTE') or die("Access Denied.");
 $dh = Core::make('helper/date');
+
+use Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderItem;
+use Concrete\Package\CommunityStore\Src\CommunityStore\Product\Product;
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Price as Price;
 use Concrete\Core\Page\Page;
+use Concrete\Package\CommunityStoreOrderHistory\Src\OrderList;
 
 $th = Core::make('helper/text');
 /* @var $th \Concrete\Core\Utility\Service\Text */
 ?>
 
-<?php if ($controller->getTask() == 'order'){
+<?php if ($controller->getAction() === 'order'){
 	$form = Core::make('helper/form');
 
 	?>
 
-	<div class="ccm-dashboard-header-buttons">
+	<div style="margin-bottom: 20px">
 		<form action="<?=URL::to('/account/orders/slip')?>" method="post" target="_blank">
 			<input type="hidden" name="oID" value="<?= $order->getOrderID()?>">
-			<button class="btn btn-primary"><?= t("Print Order Slip")?></button>
+			<button class="btn btn-primary"><?= t('Print Order Slip')?></button>
 		</form>
 	</div>
 
@@ -49,22 +53,22 @@ $th = Core::make('helper/text');
 	</div>
 
 	<fieldset>
-		<legend><?= t("Customer Details")?></legend>
+		<legend><?= t('Customer Details')?></legend>
 
 		<div class="row">
 			<div class="col-sm-4">
-				<?php $orderemail = $order->getAttribute("email"); ?>
+				<?php $orderemail = $order->getAttribute('email'); ?>
 
-				<h4><?= t("Name")?></h4>
-				<p><?= $order->getAttribute("billing_first_name"). " " . $order->getAttribute("billing_last_name")?></p>
+				<h4><?= t('Name')?></h4>
+				<p><?= $order->getAttribute('billing_first_name'). " " . $order->getAttribute("billing_last_name")?></p>
 
 				<?php if ($orderemail) { ?>
-					<h4><?= t("Email")?></h4>
-					<p><a href="mailto:<?= $order->getAttribute("email"); ?>"><?= $order->getAttribute("email"); ?></a></p>
+					<h4><?= t('Email')?></h4>
+					<p><a href="mailto:<?= $order->getAttribute('email'); ?>"><?= $order->getAttribute('email'); ?></a></p>
 				<?php } ?>
 
 				<?php
-				$phone = $order->getAttribute("billing_phone");
+				$phone = $order->getAttribute('billing_phone');
 				if ($phone) {
 					?>
 					<h4><?= t('Phone'); ?></h4>
@@ -79,7 +83,7 @@ $th = Core::make('helper/text');
 			</div>
 
 			<div class="col-sm-4">
-				<h4><?= t("Billing Address")?></h4>
+				<h4><?= t('Billing Address')?></h4>
 				<p>
 					<?= $order->getAttribute('billing_first_name'). " " . $order->getAttribute('billing_last_name')?><br>
 					<?php
@@ -335,13 +339,13 @@ $th = Core::make('helper/text');
 		</form>
 
 		<?php if (!empty($orderList)) {
-			/* @var $orderListObject \Concrete\Package\CommunityStoreOrderHistory\Src\OrderList */
+			/* @var $orderListObject OrderList */
 			?>
 			<div class="table-responsive">
 			<table class="table ccm-search-results">
 				<thead>
 				<tr>
-					<th><a href="<?= $orderListObject->getSortURL('oID')?>"><?= t('Order %s',"#")?></a></th>
+					<th><a href="<?= $orderListObject->getSortURL('oID')?>"><?= t('Order %s', '#')?></a></th>
 					<th><?= t('Products')?></th>
 					<th><a href="<?= $orderListObject->getSortURL('oDate')?>"><?= t('Order Date')?></a></th>
 					<th><a href="<?= $orderListObject->getSortURL('oTotal')?>"><?= t('Total')?></a></th>
@@ -363,7 +367,7 @@ $th = Core::make('helper/text');
 					?>
 					<tr>
 						<td><?= $canstart; ?>
-							<a target="_blank" href="<?=URL::to('/account/orders/order/',$order->getOrderID())?>"><?= $order->getOrderID()?></a><?= $canend; ?>
+							<a href="<?=URL::to('/account/orders/order/',$order->getOrderID())?>"><?= $order->getOrderID()?></a><?= $canend; ?>
 						</td>
 						<td>
 							<?= $canstart; ?>
@@ -375,16 +379,18 @@ $th = Core::make('helper/text');
 								?>
 								<ul style="list-style: none; padding:0"><?php
 								foreach ($items as $item) {
-									$urla = $url2 = '';
-									/* @var $item \Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderItem */
+									$url1 = $url2 = '';
+									/* @var $item OrderItem */
 									$product = $item->getProductObject();
 									if ($product) {
-										/* @var $product \Concrete\Package\CommunityStore\Src\CommunityStore\Product\Product */
+										/* @var $product Product */
 										$id = $product->getPageID();
-										$page = Page::getByID($id);
-										if ($page) {
-											$url1 = '<a href="' . Url::to($page->getCollectionLink()). '" target="_blank">';
-											$url2 = '</a>';
+										if ($id) {
+											$page = Page::getByID($id);
+											if ($page && !$page->isInTrash()) {
+												$url1 = '<a href="' . Url::to($page->getCollectionLink()) . '" target="_blank">';
+												$url2 = '</a>';
+											}
 										}
 									}
 
@@ -430,7 +436,7 @@ $th = Core::make('helper/text');
 						<td>
 							<form action="<?=URL::to('/account/orders/slip')?>" method="post" target="_blank">
 								<input type="hidden" name="oID" value="<?= $order->getOrderID()?>">
-								<button class="btn btn-primary"><?= t("Print")?></button>
+								<button class="btn btn-primary"><?= t('Print')?></button>
 							</form>
 						</td>
 					</tr>
@@ -448,9 +454,4 @@ $th = Core::make('helper/text');
 	<?php if ($paginator->getTotalPages() > 1) { ?>
 		<?= $pagination ?>
 	<?php } ?>
-
-	<div class="form-actions">
-		<a href="<?php echo URL::to('/account')?>" class="btn btn-default" /><?php echo t('Back to Account')?></a>
-	</div>
-
 <?php }
