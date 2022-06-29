@@ -1,6 +1,6 @@
 <?php
 namespace Concrete\Package\CommunityStoreOrderHistory;
-defined('C5_EXECUTE') or die("Access Denied.");
+defined('C5_EXECUTE') or die('Access Denied.');
 use Package;
 use Core;
 use Concrete\Core\Page\Page;
@@ -9,19 +9,24 @@ use Whoops\Exception\ErrorException;
 
 class Controller extends Package {
 	protected $pkgHandle = 'community_store_order_history';
-	protected $appVersionRequired = '5.7.5';
-	protected $pkgVersion = '0.2';
+	protected $appVersionRequired = '8.5.7';
+	protected $pkgVersion = '0.3';
+
+	protected $pkgAutoloaderRegistries = [
+		'src' => 'Concrete\Package\CommunityStoreOrderHistory\Src',
+	];
+
 
 	protected $singlePages = array(
 		'/account/orders',
 	);
 
 	public function getPackageDescription () {
-		return t("Community store order history in user profile");
+		return t('Community store order history in user profile');
 	}
 
 	public function getPackageName () {
-		return t("Community Store Order History");
+		return t('Community Store Order History');
 	}
 
 	public function install () {

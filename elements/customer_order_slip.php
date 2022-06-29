@@ -56,12 +56,12 @@ $dh = Core::make('helper/date');
             <div class="row">
                 <div class="col-xs-4">
                     <h4><?= t("Name")?></h4>
-                    <p><?= $order->getAttribute("billing_first_name"). " " . $order->getAttribute("billing_last_name")?></p>
+                    <p><?= $order->getAttribute('billing_first_name'). " " . $order->getAttribute('billing_last_name')?></p>
 
-                    <?php $orderemail = $order->getAttribute("email");
+                    <?php $orderemail = $order->getAttribute('email');
                     if ($orderemail) { ?>
                         <h4><?= t("Email") ?></h4>
-                        <p><a href="mailto:<?= $order->getAttribute("email"); ?>"><?= $order->getAttribute("email"); ?></a></p>
+                        <p><a href="mailto:<?= $order->getAttribute('email'); ?>"><?= $order->getAttribute('email'); ?></a></p>
                     <?php } ?>
 
                     <?php
@@ -73,9 +73,9 @@ $dh = Core::make('helper/date');
                     <?php } ?>
 
                     <?php
-                    $vat_number = $order->getAttribute("vat_number");
+                    $vat_number = $order->getAttribute('vat_number');
                     if (Config::get('community_store.vat_number') && $vat_number) { ?>
-                        <h4><?= t("VAT Number")?></h4>
+                        <h4><?= t('VAT Number')?></h4>
                         <p><?=$vat_number?></p>
                     <?php } ?>
 
@@ -85,15 +85,10 @@ $dh = Core::make('helper/date');
                     <h4><?= t("Billing Address") ?></h4>
 
                     <p>
-                        <?= $order->getAttribute("billing_first_name") . " " . $order->getAttribute("billing_last_name") ?>
+                        <?= $order->getAttribute('billing_first_name') . ' ' . $order->getAttribute('billing_last_name') ?>
                         <br>
                         <?php
-						if ($csVersion < 2) {
-							$handle = StoreOrderKey::getByHandle('billing_address');
-						} else {
-							$handle = 'billing_address';
-						}
-						$billingaddress = $order->getAttributeValueObject($handle);
+						$billingaddress = $order->getAttributeValueObject('billing_address');
                         if ($billingaddress) {
                             echo $billingaddress->getValue('displaySanitized', 'display');
                         }?>
@@ -101,16 +96,11 @@ $dh = Core::make('helper/date');
                 </div>
                 <div class="col-xs-4">
                     <?php
-					if ($csVersion < 2) {
-						$handle = StoreOrderKey::getByHandle('shipping_address');
-					} else {
-						$handle = 'shipping_address';
-					}
-                    $billingaddress = $order->getAttributeValueObject($handle);
+                    $billingaddress = $order->getAttributeValueObject('shipping_address');
                     if ($billingaddress) { ?>
-                        <h4><?= t("Shipping Address") ?></h4>
+                        <h4><?= t('Shipping Address') ?></h4>
                         <p>
-                            <?= $order->getAttribute("shipping_first_name") . " " . $order->getAttribute("shipping_last_name") ?>
+                            <?= $order->getAttribute('shipping_first_name') . " " . $order->getAttribute('shipping_last_name') ?>
                             <br>
                             <?= $billingaddress->getValue('displaySanitized', 'display'); ?>
                         </p>
@@ -119,13 +109,9 @@ $dh = Core::make('helper/date');
 
                 <?php if ($orderChoicesEnabled) { ?>
                     <div class="col-xs-12">
-                        <h4><?= t("Other Choices") ?></h4>
+                        <h4><?= t('Other Choices') ?></h4>
                         <?php foreach ($orderChoicesAttList as $ak) {
-							if ($csVersion < 2){
-								$handle = StoreOrderKey::getByHandle($ak->getAttributeKeyHandle());
-							} else {
-								$handle = $ak->getAttributeKeyHandle();
-							}
+							$handle = $ak->getAttributeKeyHandle();
 							?>
                             <label><?= $ak->getAttributeKeyDisplayName() ?></label>
                             <p><?= str_replace("\r\n", "<br>", $order->getAttributeValueObject($handle)->getValue('displaySanitized', 'display')); ?></p>
@@ -138,16 +124,16 @@ $dh = Core::make('helper/date');
         <br/>
 
         <fieldset>
-            <legend><?= t("Order Items") ?></legend>
+            <legend><?= t('Order Items') ?></legend>
 
             <table class="table table-striped table-condensed">
                 <thead>
                 <tr>
-                    <th><strong><?= t("Product Name") ?></strong></th>
-                    <th><?= t("Product Options") ?></th>
-                    <th><?= t("Price") ?></th>
-                    <th><?= t("Quantity") ?></th>
-                    <th><?= t("Subtotal") ?></th>
+                    <th><strong><?= t('Product Name') ?></strong></th>
+                    <th><?= t('Product Options') ?></th>
+                    <th><?= t('Price') ?></th>
+                    <th><?= t('Quantity') ?></th>
+                    <th><?= t('Subtotal') ?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -165,12 +151,12 @@ $dh = Core::make('helper/date');
                                 if ($options) {
                                     echo "<ul class='list-unstyled'>";
                                     foreach ($options as $option) {
-                                        echo "<li>";
-                                        echo "<strong>" . $option['oioKey'] . ": </strong>";
+                                        echo '<li>';
+                                        echo '<strong>' . $option['oioKey'] . ': </strong>';
                                         echo $option['oioValue'];
-                                        echo "</li>";
+                                        echo '</li>';
                                     }
-                                    echo "</ul>";
+                                    echo '</ul>';
                                 }
                                 ?>
                             </td>
@@ -187,12 +173,12 @@ $dh = Core::make('helper/date');
         </fieldset>
 
         <p>
-            <strong><?= t("Subtotal") ?>: </strong><?= Price::format($order->getSubTotal()) ?><br>
+            <strong><?= t('Subtotal') ?>: </strong><?= Price::format($order->getSubTotal()) ?><br>
             <?php foreach ($order->getTaxes() as $tax) { ?>
                 <strong><?= $tax['label'] ?>
                     :</strong> <?= Price::format($tax['amount'] ? $tax['amount'] : $tax['amountIncluded']) ?><br>
             <?php } ?>
-            <strong><?= t("Shipping") ?>: </strong><?= Price::format($order->getShippingTotal()) ?><br>
+            <strong><?= t('Shipping') ?>: </strong><?= Price::format($order->getShippingTotal()) ?><br>
 
             <?php $applieddiscounts = $order->getAppliedDiscounts();
             if (!empty($applieddiscounts)) { ?>
@@ -207,13 +193,13 @@ $dh = Core::make('helper/date');
                 <br/>
             <?php } ?>
 
-            <strong><?= t("Grand Total") ?>: </strong><?= Price::format($order->getTotal()) ?>
+            <strong><?= t('Grand Total') ?>: </strong><?= Price::format($order->getTotal()) ?>
         </p>
 
         <p>
-            <strong><?= t("Payment Method") ?>: </strong><?= t($order->getPaymentMethodName()) ?><br>
+            <strong><?= t('Payment Method') ?>: </strong><?= t($order->getPaymentMethodName()) ?><br>
             <?php if ($order->isShippable()) { ?>
-            <br><strong><?= t("Shipping Method") ?>: </strong><?= $order->getShippingMethodName() ?>
+            <br><strong><?= t('Shipping Method') ?>: </strong><?= $order->getShippingMethodName() ?>
 
             <?php
             $shippingInstructions = $order->getShippingInstructions();
@@ -221,7 +207,7 @@ $dh = Core::make('helper/date');
 
         </p>
         <p>
-            <strong><?= t("Delivery Instructions") ?>: </strong><?= $shippingInstructions ?>
+            <strong><?= t('Delivery Instructions') ?>: </strong><?= $shippingInstructions ?>
         </p>
         <?php } ?>
 

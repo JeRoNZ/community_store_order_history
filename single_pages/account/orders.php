@@ -73,7 +73,7 @@ $th = Core::make('helper/text');
 
 				<?php if (Config::get('community_store.vat_number')) { ?>
 					<?php $vat_number = $order->getAttribute('vat_number'); ?>
-					<h4><?= t("VAT Number")?></h4>
+					<h4><?= t('VAT Number')?></h4>
 					<p><?=$vat_number?></p>
 				<?php } ?>
 			</div>
@@ -81,13 +81,9 @@ $th = Core::make('helper/text');
 			<div class="col-sm-4">
 				<h4><?= t("Billing Address")?></h4>
 				<p>
-					<?= $order->getAttribute("billing_first_name"). " " . $order->getAttribute("billing_last_name")?><br>
+					<?= $order->getAttribute('billing_first_name'). " " . $order->getAttribute('billing_last_name')?><br>
 					<?php
-					if ($csVersion < 2){
-						$class = $controller->GetStoreOrderKeyClass();
-						$billingaddress = $order->getAttributeValueObject($class::getByHandle('billing_address'));
-					} else
-						$billingaddress = $order->getAttributeValueObject('billing_address');
+					$billingaddress = $order->getAttributeValueObject('billing_address');
 
 					if ($billingaddress) {
 						echo $billingaddress->getValue('displaySanitized', 'display');
@@ -97,17 +93,12 @@ $th = Core::make('helper/text');
 			</div>
 			<?php if ($order->isShippable()) { ?>
 				<div class="col-sm-4">
-					<?php if ($order->getAttribute("shipping_address")->address1) { ?>
-						<h4><?= t("Shipping Address")?></h4>
+					<?php if ($order->getAttribute('shipping_address')->address1) { ?>
+						<h4><?= t('Shipping Address')?></h4>
 						<p>
-							<?= $order->getAttribute("shipping_first_name"). " " . $order->getAttribute("shipping_last_name")?><br>
+							<?= $order->getAttribute('shipping_first_name'). " " . $order->getAttribute('shipping_last_name')?><br>
 							<?php
-							if ($csVersion < 2 ) {
-								$class = $controller->GetStoreOrderKeyClass();
-								$shippingaddress = $order->getAttributeValueObject($class::getByHandle('shipping_address'));
-							} else {
-								$shippingaddress = $order->getAttributeValueObject('shipping_address');
-							}
+							$shippingaddress = $order->getAttributeValueObject('shipping_address');
 
 							if ($shippingaddress) {
 								echo $shippingaddress->getValue('displaySanitized', 'display');
@@ -121,15 +112,15 @@ $th = Core::make('helper/text');
 	</fieldset>
 
 	<fieldset>
-		<legend><?= t("Order Items")?></legend>
+		<legend><?= t('Order Items')?></legend>
 		<table class="table table-striped">
 			<thead>
 			<tr>
-				<th><strong><?= t("Product Name")?></strong></th>
-				<th><?= t("Product Options")?></th>
-				<th><?= t("Price")?></th>
-				<th><?= t("Quantity")?></th>
-				<th><?= t("Subtotal")?></th>
+				<th><strong><?= t('Product Name')?></strong></th>
+				<th><?= t('Product Options')?></th>
+				<th><?= t('Price')?></th>
+				<th><?= t('Quantity')?></th>
+				<th><?= t('Subtotal')?></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -152,8 +143,8 @@ $th = Core::make('helper/text');
 								echo "<ul class='list-unstyled'>";
 								foreach($options as $option){
 									echo "<li>";
-									echo "<strong>".$option['oioKey'].": </strong>";
-									echo ($option['oioValue'] ? $option['oioValue'] : '<em>' .t('None') . '</em>');
+									echo '<strong>' .$option['oioKey']. ': </strong>';
+									echo ($option['oioValue'] ?: '<em>' .t('None') . '</em>');
 									echo "</li>";
 								}
 								echo "</ul>";
@@ -171,7 +162,7 @@ $th = Core::make('helper/text');
 			</tbody>
 			<tfoot>
 			<tr>
-				<td colspan="4" class="text-right"><strong><?= t("Items Subtotal")?>:</strong></td>
+				<td colspan="4" class="text-right"><strong><?= t('Items Subtotal')?>:</strong></td>
 				<td colspan="1" ><?=Price::format($order->getSubTotal())?></td>
 			</tr>
 			</tfoot>
@@ -181,16 +172,16 @@ $th = Core::make('helper/text');
 		<?php $applieddiscounts = $order->getAppliedDiscounts();
 
 		if (!empty($applieddiscounts)) { ?>
-			<h4><?= t("Discounts Applied")?></h4>
+			<h4><?= t('Discounts Applied')?></h4>
 			<hr />
 			<table class="table table-striped">
 				<thead>
 				<tr>
-					<th><strong><?= t("Name")?></strong></th>
-					<th><?= t("Displayed")?></th>
-					<th><?= t("Discount")?></th>
-					<th><?= t("Amount")?></th>
-					<th><?= t("Triggered")?></th>
+					<th><strong><?= t('Name')?></strong></th>
+					<th><?= t('Displayed')?></th>
+					<th><?= t('Discount')?></th>
+					<th><?= t('Amount')?></th>
+					<th><?= t('Triggered')?></th>
 				</tr>
 
 				</thead>
@@ -206,27 +197,27 @@ $th = Core::make('helper/text');
 
 							$discountRuleDeduct = $deductfrom;
 
-							if ($deducttype == 'percentage') {
+							if ($deducttype === 'percentage') {
 								$discountRuleDeduct = t('from products');
 							}
 
-							if ($deducttype == 'value_all') {
+							if ($deducttype === 'value_all') {
 								$discountRuleDeduct = t('from each product');
 							}
 
-							if ($deducttype == 'percentage' && $deductfrom == 'shipping' ) {
+							if ($deducttype === 'percentage' && $deductfrom === 'shipping' ) {
 								$discountRuleDeduct = t('from shipping');
 							}
 
-							if (($deducttype == 'value_all' || $deducttype == 'value') && $deductfrom == 'shipping') {
+							if (($deducttype === 'value_all' || $deducttype === 'value') && $deductfrom === 'shipping') {
 								$discountRuleDeduct = t('from shipping');
 							}
 
-							if ($deducttype == 'fixed' ) {
+							if ($deducttype === 'fixed' ) {
 								$discountRuleDeduct = t('set as price');
 							}
 
-							if ($deducttype == 'fixed' && $deductfrom == 'shipping') {
+							if ($deducttype === 'fixed' && $deductfrom === 'shipping') {
 								$discountRuleDeduct = t('set as price for shipping');
 							}
 							?>
@@ -254,25 +245,25 @@ $th = Core::make('helper/text');
 			<p>
 				<?php foreach ($order->getTaxes() as $tax) { ?>
 					<strong><?= $tax['label'] ?>
-						:</strong> <?= Price::format($tax['amount'] ? $tax['amount'] : $tax['amountIncluded']) ?><br>
+						:</strong> <?= Price::format($tax['amount'] ?: $tax['amountIncluded']) ?><br>
 				<?php } ?>
 			</p>
 		<?php } ?>
 
 		<p>
-			<strong><?= t("Grand Total") ?>: </strong><?= Price::format($order->getTotal()) ?>
+			<strong><?= t('Grand Total') ?>: </strong><?= Price::format($order->getTotal()) ?>
 		</p>
 		<p>
-			<strong><?= t("Payment Method") ?>: </strong><?= t($order->getPaymentMethodName()) ?><br>
+			<strong><?= t('Payment Method') ?>: </strong><?= t($order->getPaymentMethodName()) ?><br>
 			<?php $transactionReference = $order->getTransactionReference();
 			if ($transactionReference) { ?>
-				<strong><?= t("Transaction Reference") ?>: </strong><?= $transactionReference ?><br>
+				<strong><?= t('Transaction Reference') ?>: </strong><?= $transactionReference ?><br>
 			<?php } ?>
 		</p>
 
 		<?php if ($order->isShippable()) { ?>
 			<br /><p>
-				<strong><?= t("Shipping Method") ?>: </strong><?= $order->getShippingMethodName() ?>
+				<strong><?= t('Shipping Method') ?>: </strong><?= $order->getShippingMethodName() ?>
 			</p>
 
 
@@ -283,11 +274,11 @@ $th = Core::make('helper/text');
 			$carrier = $order->getCarrier();
 
 			if ($carrier) { ?>
-				<p><strong><?= t("Carrier") ?>: </strong><?= $carrier ?></p>
+				<p><strong><?= t('Carrier') ?>: </strong><?= $carrier ?></p>
 			<?php }
 
 			if ($trackingCode) { ?>
-				<p><strong><?= t("Tracking Code") ?>: </strong><?= $trackingCode ?> </p>
+				<p><strong><?= t('Tracking Code') ?>: </strong><?= $trackingCode ?> </p>
 			<?php }
 
 			if ($trackingURL) { ?>
@@ -297,7 +288,7 @@ $th = Core::make('helper/text');
 			<?php
 			$shippingInstructions = $order->getShippingInstructions();
 			if ($shippingInstructions) { ?>
-				<p><strong><?= t("Delivery Instructions") ?>: </strong><?= $shippingInstructions ?></p>
+				<p><strong><?= t('Delivery Instructions') ?>: </strong><?= $shippingInstructions ?></p>
 			<?php } ?>
 
 		<?php } ?>
@@ -305,7 +296,7 @@ $th = Core::make('helper/text');
 		<div class="row">
 			<?php if (!empty($orderChoicesAttList)) { ?>
 				<div class="col-sm-12">
-					<h4><?= t("Other Choices")?></h4>
+					<h4><?= t('Other Choices')?></h4>
 					<?php foreach ($orderChoicesAttList as $ak) {
 						$attValue = $order->getAttributeValueObject(StoreOrderKey::getByHandle($ak->getAttributeKeyHandle()));
 						if ($attValue) {  ?>
@@ -350,13 +341,13 @@ $th = Core::make('helper/text');
 			<table class="table ccm-search-results">
 				<thead>
 				<tr>
-					<th><a href="<?= $orderListObject->getSortURL('oID')?>"><?= t("Order %s","#")?></a></th>
-					<th><?= t("Products")?></th>
-					<th><a href="<?= $orderListObject->getSortURL('oDate')?>"><?= t("Order Date")?></a></th>
-					<th><a href="<?= $orderListObject->getSortURL('oTotal')?>"><?= t("Total")?></a></th>
-					<th><a href="<?= $orderListObject->getSortURL('payment')?>"><?= t("Payment")?></a></th>
-					<th><?= t("Fulfilment")?></th>
-					<th><?= t("Print")?></th>
+					<th><a href="<?= $orderListObject->getSortURL('oID')?>"><?= t('Order %s',"#")?></a></th>
+					<th><?= t('Products')?></th>
+					<th><a href="<?= $orderListObject->getSortURL('oDate')?>"><?= t('Order Date')?></a></th>
+					<th><a href="<?= $orderListObject->getSortURL('oTotal')?>"><?= t('Total')?></a></th>
+					<th><a href="<?= $orderListObject->getSortURL('payment')?>"><?= t('Payment')?></a></th>
+					<th><?= t('Fulfilment')?></th>
+					<th><?= t('Print')?></th>
 				</tr>
 				</thead>
 				<tbody>

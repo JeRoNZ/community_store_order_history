@@ -1,6 +1,6 @@
 <?php
 namespace  Concrete\Package\CommunityStoreOrderHistory\Src;
-defined('C5_EXECUTE') or die("Access Denied.");
+defined('C5_EXECUTE') or die('Access Denied.');
 use Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderList as OL;
 use Concrete\Core\Support\Facade\Application;
 
@@ -19,7 +19,7 @@ class OrderList extends OL
 
 			$app = Application::getFacadeApplication();
 			$db = $app->make('database')->connection();
-			$matchingOrders = $db->query("SELECT DISTINCT(oID) FROM CommunityStoreOrderAttributeValues csoav INNER JOIN atDefault av ON csoav.avID = av.avID WHERE av.value LIKE ?", array('%'.$this->search.'%'));
+			$matchingOrders = $db->query('SELECT DISTINCT(oID) FROM CommunityStoreOrderAttributeValues csoav INNER JOIN atDefault av ON csoav.avID = av.avID WHERE av.value LIKE ?', array('%'.$this->search.'%'));
 
 			$orderIDs = array();
 			while ($value = $matchingOrders->fetchRow()) {
@@ -109,16 +109,13 @@ class OrderList extends OL
 
 		// This is a bit icky - it's not a real field, and the ones below are in fact dates.
 		// cancelled and refunded are likely null, paid will be too if the order is not paid for.
-		if ($this->sortBy == 'payment') {
+		if ($this->sortBy === 'payment') {
 			$dir = strtoupper($this->getActiveSortDirection());
-			if ($dir != 'DESC' && $dir != 'ASC') {
+			if ($dir !== 'DESC' && $dir !== 'ASC') {
 				$dir='ASC';
 			}
 			$this->query->orderBy('oCancelled '.$dir.',oRefunded '. $dir.',oPaid '.$dir.' ,oTotal', $dir);
 		}
-
-
-
 
 		//$query = $this->query;
 		/* @var $query \Doctrine\DBAL\Query\QueryBuilder */

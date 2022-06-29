@@ -2,6 +2,10 @@
 
 namespace Concrete\Package\CommunityStoreOrderHistory\Controller\SinglePage\Account;
 defined('C5_EXECUTE') or die("Access Denied.");
+
+use Concrete\Core\Http\Response;
+use Concrete\Core\Routing\RedirectResponse;
+use Concrete\Package\CommunityStore\Entity\Attribute\Key\StoreOrderKey;
 use Concrete\Package\CommunityStoreOrderHistory\Src\OrderList as StoreOrderList;;
 use Concrete\Core\Page\Controller\PageController;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderStatus\OrderStatus as StoreOrderStatus;
@@ -13,33 +17,13 @@ use View;
 use Request;
 use Package;
 
-defined("C5_EXECUTE") or die("Access Denied.");
-
 class Orders extends PageController {
-
-	public function getCSVersion () {
-		$pkg = Package::getByHandle('community_store');
-		/* @var $pkg \Concrete\Core\Entity\Package */
-		$version = $pkg->getPackageVersion();
-		if (version_compare('2', $version) === 1)
-			return 1;
-
-		return 2;
-	}
-
-	public function GetStoreOrderKeyClass () {
-		if ($this->getCSVersion() === 1)
-			return 'Concrete\Package\CommunityStore\Src\Attribute\Key\StoreOrderKey';
-
-		return 'Concrete\Package\CommunityStore\Entity\Attribute\Key\StoreOrderKey';
-	}
-
 	public function view ($status = '') {
 		$orderList = new StoreOrderList();
 
 		$u = new User();
-		if (!$u || ! $u->isLoggedIn()) {
-			$this->redirect('/');
+		if (!$u || ! $u->isRegistered()) {
+			return new RedirectResponse('/');
 		}
 
 		if ($this->get('keywords')) {
@@ -65,81 +49,78 @@ class Orders extends PageController {
 		$this->set('statuses', StoreOrderStatus::getAll());
 
 		$this->set('pageTitle', t('Orders'));
-
-		$this->set('csVersion', $this->getCSVersion());
 	}
 
 	public function order ($oID = false) {
-		if (!$oID)
-			$this->redirect('/');
+		if (!$oID) {
+			return new RedirectResponse('/');
+		}
 
-		if (!ctype_digit($oID))
-			$this->redirect('/');
+		if (!ctype_digit($oID)) {
+			return new RedirectResponse('/');
+		}
 
 		$u = new User();
-		if (!$u || ! $u->isLoggedIn())
-			$this->redirect('/');
+		if (!$u || ! $u->isRegistered()) {
+			return new RedirectResponse('/');
+		}
 
 		$order = StoreOrder::getByID($oID);
-		/* @var $order \Concrete\Package\CommunityStore\Src\CommunityStore\Order\Order */
+		/* @var $order StoreOrder */
 
 		if ($order) {
 			// Thou shalt not covert thy neighbour's order
-			if ($u->getUserID() != $order->getCustomerID())
-				$this->redirect('/');
-
-			$this->set("order", $order);
-			$this->set('orderStatuses', StoreOrderStatus::getList());
-			$class = $this->GetStoreOrderKeyClass();
-			$orderChoicesAttList = $class::getAttributeListBySet('order_choices');
-			if (is_array($orderChoicesAttList) && !empty($orderChoicesAttList)) {
-				$this->set("orderChoicesAttList", $orderChoicesAttList);
-			} else {
-				$this->set("orderChoicesAttList", array());
+			if ($u->getUserID() != $order->getCustomerID()) {
+				return new RedirectResponse('/');
 			}
-			##$this->requireAsset('javascript', 'communityStoreFunctions');
+
+			$this->set('order', $order);
+			$this->set('orderStatuses', StoreOrderStatus::getList());
+			$orderChoicesAttList = StoreOrderKey::getAttributeListBySet('order_choices');
+			if (is_array($orderChoicesAttList) && !empty($orderChoicesAttList)) {
+				$this->set('orderChoicesAttList', $orderChoicesAttList);
+			} else {
+				$this->set('orderChoicesAttList', array());
+			}
 		} else {
-			$this->redirect('/');
+			return new RedirectResponse('/');
 		}
 
-		$this->set('pageTitle', t("Order #") . $order->getOrderID());
-
-		$this->set('csVersion', $this->getCSVersion());
+		$this->set('pageTitle', t('Order #') . $order->getOrderID());
 	}
 
 	public function slip() {
 		$u = new User();
-		if (!$u || ! $u->isLoggedIn()) {
-			$this->redirect('/');
+		if (!$u || ! $u->isRegistered()) {
+			return new RedirectResponse('/');
 		}
 
 // If we're not a post request, get out otherwise we get an exception
 		if (! Request::isPost()) {
-			$this->redirect('/');
+			return new RedirectResponse('/');
 		}
 
+		/** @var StoreOrder $o */
 		$o = StoreOrder::getByID($this->post('oID'));
 		if (! $o) {
-			$this->redirect('/');
+			return new RedirectResponse('/');
 		}
 
 		// Thou shalt not covert thy neighbour's order
 		if ($o->getCustomerID() != $u->getUserID()) {
-			$this->redirect('/');
+			return new RedirectResponse('/');
 		}
 
-		$class = $this->GetStoreOrderKeyClass();
-		$orderChoicesAttList = $class::getAttributeListBySet('order_choices', $u);
+		$orderChoicesAttList = StoreOrderKey::getAttributeListBySet('order_choices', $u);
 		$orderChoicesEnabled = count($orderChoicesAttList)? true : false;
 
-		$version = $this->getCSVersion();
-
-		if (Filesystem::exists(DIR_BASE."/application/elements/customer_order_slip.php")) {
-			View::element("customer_order_slip", array('order' => $o, 'orderChoicesEnabled' => $orderChoicesEnabled, 'orderChoicesAttList' => $orderChoicesAttList, 'csVersion' =>$version));
+		ob_start();
+		if (Filesystem::exists(DIR_BASE. '/application/elements/customer_order_slip.php')) {
+			View::element('customer_order_slip', array('order' => $o, 'orderChoicesEnabled' => $orderChoicesEnabled, 'orderChoicesAttList' => $orderChoicesAttList));
 		} else {
-			View::element("customer_order_slip", array('order' => $o, 'orderChoicesEnabled' => $orderChoicesEnabled, 'orderChoicesAttList' => $orderChoicesAttList, 'csVersion' =>$version), "community_store_order_history");
+			View::element('customer_order_slip', array('order' => $o, 'orderChoicesEnabled' => $orderChoicesEnabled, 'orderChoicesAttList' => $orderChoicesAttList), 'community_store_order_history');
 		}
-		die(); // this is a non-themed page
+		return new Response(ob_get_clean());
 	}
 
 
