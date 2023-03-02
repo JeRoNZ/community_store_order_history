@@ -92,10 +92,12 @@ class OrderList extends OL
 			}
 		}
 
-		if ($this->limit > 0) {
-			$this->query->setMaxResults($this->limit);
+		if (isset($this->refunded)) {
+			if ($this->limit > 0) {
+				$this->query->setMaxResults($this->limit);
+			}
 		}
-
+		
 		if (isset($this->externalPaymentRequested) && $this->externalPaymentRequested) {
 		} else {
 			$this->query->andWhere('o.externalPaymentRequested is null');
