@@ -1,17 +1,27 @@
 <?php
 namespace  Concrete\Package\CommunityStoreOrderHistory\Src;
 defined('C5_EXECUTE') or die('Access Denied.');
+
+use Concrete\Core\Database\Connection\Connection;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderList as OL;
 use Concrete\Core\Support\Facade\Application;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class OrderList extends OL
 {
 	protected $autoSortColumns = array('oID','cID','oDate','oTotal');
+    private $limit;
 
 	// Copy of community store Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderList,
 	// but without the fixed sort by
-	public function finalizeQuery(QueryBuilder $query)
+    /**
+     * @throws Exception
+     * @throws BindingResolutionException
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function finalizeQuery(QueryBuilder $query)
 	{
 		$paramcount = 0;
 
@@ -19,11 +29,14 @@ class OrderList extends OL
 			$this->query->where('oID like ?')->setParameter($paramcount++, '%'. $this->search. '%');
 
 			$app = Application::getFacadeApplication();
+            /**
+             * @var Connection $db
+             */
 			$db = $app->make('database')->connection();
 			$matchingOrders = $db->query('SELECT DISTINCT(oID) FROM CommunityStoreOrderAttributeValues csoav INNER JOIN atDefault av ON csoav.avID = av.avID WHERE av.value LIKE ?', array('%'.$this->search.'%'));
 
 			$orderIDs = array();
-			while ($value = $matchingOrders->fetchRow()) {
+			while ($value = $matchingOrders->fetchAssociative()) {
 				$orderIDs[] = $value['oID'];
 			}
 
@@ -34,6 +47,9 @@ class OrderList extends OL
 
 		if (isset($this->status)) {
 			$app = Application::getFacadeApplication();
+            /**
+             * @var Connection $db
+             */
 			$db = $app->make('database')->connection();
 			$matchingOrders = $db->query('SELECT oID FROM CommunityStoreOrderStatusHistories t1
                                             WHERE oshStatus = ? and
@@ -42,7 +58,7 @@ class OrderList extends OL
                                                              WHERE t2.oID = t1.oID)', array($this->status));
 			$orderIDs = array();
 
-			while ($value = $matchingOrders->fetchRow()) {
+			while ($value = $matchingOrders->fetchAssociative()) {
 				$orderIDs[] = $value['oID'];
 			}
 
@@ -97,7 +113,7 @@ class OrderList extends OL
 				$this->query->setMaxResults($this->limit);
 			}
 		}
-		
+
 		if (isset($this->externalPaymentRequested) && $this->externalPaymentRequested) {
 		} else {
 			$this->query->andWhere('o.externalPaymentRequested is null');
