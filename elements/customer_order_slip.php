@@ -1,5 +1,6 @@
 <?php
 defined('C5_EXECUTE') or die("Access Denied.");
+
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Price as Price;
 use \Concrete\Package\CommunityStore\Src\Attribute\Key\StoreOrderKey as StoreOrderKey;
 
@@ -10,7 +11,8 @@ $dh = Core::make('helper/date');
 <html>
 <head>
     <title><?= t("Order #") . $order->getOrderID() ?></title>
-    <link href="<?= str_replace('/index.php/', '/' , \URL::to('/concrete/css/app.css')); ?>" rel="stylesheet" type="text/css" media="all">
+    <link href="<?= str_replace('/index.php/', '/', \URL::to('/concrete/css/cms.css')); ?>" rel="stylesheet"
+          type="text/css" media="all">
     <style>
         td, th {
             font-size: 14px;
@@ -38,7 +40,7 @@ $dh = Core::make('helper/date');
                 } else {
                     if ($refunded) {
                         $refundreason = $order->getRefundReason();
-                        echo '<p class="alert alert-warning text-center"><strong>' . t('Refunded') . ' - ' . $dh->formatDateTime($refunded)  . ($refundreason ? ' - ' . $refundreason : '') . '</strong></p>';
+                        echo '<p class="alert alert-warning text-center"><strong>' . t('Refunded') . ' - ' . $dh->formatDateTime($refunded) . ($refundreason ? ' - ' . $refundreason : '') . '</strong></p>';
                     } elseif ($paid) {
                         echo '<p class="alert alert-success text-center"><strong>' . t('Paid') . ' - ' . $dh->formatDateTime($paid) . '</strong></p>';
                     } elseif ($order->getTotal() > 0) {
@@ -55,19 +57,21 @@ $dh = Core::make('helper/date');
             <legend><?= t("Customer Details") ?></legend>
             <div class="row">
                 <div class="col-xs-4">
-                    <h4><?= t("Name")?></h4>
-                    <p><?= $order->getAttribute('billing_first_name'). " " . $order->getAttribute('billing_last_name')?></p>
+                    <h4><?= t("Name") ?></h4>
+                    <p><?= $order->getAttribute('billing_first_name') . " " . $order->getAttribute('billing_last_name') ?></p>
 
                     <?php $orderemail = $order->getAttribute('email');
                     if ($orderemail) { ?>
                         <h4><?= t("Email") ?></h4>
-                        <p><a href="mailto:<?= $order->getAttribute('email'); ?>"><?= $order->getAttribute('email'); ?></a></p>
+                        <p>
+                            <a href="mailto:<?= $order->getAttribute('email'); ?>"><?= $order->getAttribute('email'); ?></a>
+                        </p>
                     <?php } ?>
 
                     <?php
                     $phone = $order->getAttribute("billing_phone");
                     if ($phone) {
-                    ?>
+                        ?>
                         <h4><?= t("Phone") ?></h4>
                         <p><?= $order->getAttribute("billing_phone") ?></p>
                     <?php } ?>
@@ -75,8 +79,8 @@ $dh = Core::make('helper/date');
                     <?php
                     $vat_number = $order->getAttribute('vat_number');
                     if (Config::get('community_store.vat_number') && $vat_number) { ?>
-                        <h4><?= t('VAT Number')?></h4>
-                        <p><?=$vat_number?></p>
+                        <h4><?= t('VAT Number') ?></h4>
+                        <p><?= $vat_number ?></p>
                     <?php } ?>
 
                 </div>
@@ -88,10 +92,10 @@ $dh = Core::make('helper/date');
                         <?= $order->getAttribute('billing_first_name') . ' ' . $order->getAttribute('billing_last_name') ?>
                         <br>
                         <?php
-						$billingaddress = $order->getAttributeValueObject('billing_address');
+                        $billingaddress = $order->getAttributeValueObject('billing_address');
                         if ($billingaddress) {
                             echo $billingaddress->getValue('displaySanitized', 'display');
-                        }?>
+                        } ?>
                     </p>
                 </div>
                 <div class="col-xs-4">
@@ -111,8 +115,8 @@ $dh = Core::make('helper/date');
                     <div class="col-xs-12">
                         <h4><?= t('Other Choices') ?></h4>
                         <?php foreach ($orderChoicesAttList as $ak) {
-							$handle = $ak->getAttributeKeyHandle();
-							?>
+                            $handle = $ak->getAttributeKeyHandle();
+                            ?>
                             <label><?= $ak->getAttributeKeyDisplayName() ?></label>
                             <p><?= str_replace("\r\n", "<br>", $order->getAttributeValueObject($handle)->getValue('displaySanitized', 'display')); ?></p>
                         <?php } ?>
@@ -174,7 +178,8 @@ $dh = Core::make('helper/date');
 
         <p>
             <strong><?= t('Subtotal') ?>: </strong><?= Price::format($order->getSubTotal()) ?><br>
-            <?php foreach ($order->getTaxes() as $tax) { ?>
+            <?php
+            foreach ($order->getTaxes() as $tax) { ?>
                 <strong><?= $tax['label'] ?>
                     :</strong> <?= Price::format($tax['amount'] ? $tax['amount'] : $tax['amountIncluded']) ?><br>
             <?php } ?>

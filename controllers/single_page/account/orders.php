@@ -115,7 +115,7 @@ class Orders extends PageController {
 		$orderChoicesEnabled = count($orderChoicesAttList)? true : false;
 
 		ob_start();
-		if (Filesystem::exists(DIR_BASE. '/application/elements/customer_order_slip.php')) {
+		if (file_exists(DIR_BASE. '/application/elements/customer_order_slip.php')) {
 			View::element('customer_order_slip', array('order' => $o, 'orderChoicesEnabled' => $orderChoicesEnabled, 'orderChoicesAttList' => $orderChoicesAttList));
 		} else {
 			View::element('customer_order_slip', array('order' => $o, 'orderChoicesEnabled' => $orderChoicesEnabled, 'orderChoicesAttList' => $orderChoicesAttList), 'community_store_order_history');
