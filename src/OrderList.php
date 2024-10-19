@@ -14,6 +14,23 @@ class OrderList extends OL
 	protected $autoSortColumns = array('oID','cID','oDate','oTotal');
     private $limit;
 
+
+	/**
+	 * @var int|null
+	 */
+	protected $cID = null;
+
+
+	/**
+	 * @param int|null $cID
+	 */
+	public function setCustomerID($cID)
+	{
+		$this->cID = is_numeric($cID) ? (int) $cID : null;
+	}
+
+
+
 	// Copy of community store Concrete\Package\CommunityStore\Src\CommunityStore\Order\OrderList,
 	// but without the fixed sort by
     /**
