@@ -1,8 +1,8 @@
-# User Account Order History for concrete5 Community Store
+# User Account Order History for Concrete CMS Community Store
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-An addition to the concrete5 community store (https://github.com/concrete5-community-store/community_store) that
+An addition to the concrete5 community store https://github.com/concretecms-community-store/community_store) that
 shows a user's purchase history on their account. As with the community store, a Bootstrap based theme is assumed.
 
 ## Installation
