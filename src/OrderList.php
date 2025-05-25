@@ -12,7 +12,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 class OrderList extends OL
 {
 	protected $autoSortColumns = array('oID','cID','oDate','oTotal');
-    private $limit;
+    protected $limit;
 
 
 	/**
