@@ -1,17 +1,23 @@
 <?php
 defined('C5_EXECUTE') or die("Access Denied.");
-use \Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Price as Price;
-use \Concrete\Package\CommunityStore\Src\Attribute\Key\StoreOrderKey as StoreOrderKey;
 
-$dh = Core::make('helper/date');
+use \Concrete\Core\Support\Facade\Url;
+use \Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Price;
+
+$app = \Concrete\Core\Support\Facade\Application::getFacadeApplication();
+$dh = $app->make('helper/date');
 
 ?>
 <!doctype html>
 <html>
 <head>
     <title><?= t("Order #") . $order->getOrderID() ?></title>
-    <link href="<?= str_replace('/index.php/', '/' , \URL::to('/concrete/css/app.css')); ?>" rel="stylesheet" type="text/css" media="all">
-    <style>
+    <?php
+    if (version_compare($app->make('config')->get('concrete.version'), '9.0', '<')) { ?>
+    <link href="<?= str_replace('/index.php/', '/' , Url::to('/concrete/css/app.css')); ?>" rel="stylesheet" type="text/css" media="all">
+    <?php } else { ?>
+    <link href="<?= str_replace('/index.php/', '/' , Url::to('/concrete/css/cms.css')); ?>" rel="stylesheet" type="text/css" media="all">
+    <?php } ?>    <style>
         td, th {
             font-size: 14px;
         }
